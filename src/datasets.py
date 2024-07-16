@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from typing import Tuple
 from termcolor import cprint
-
+from sklearn.model_selection import train_test_split
 
 class ThingsMEGDataset(torch.utils.data.Dataset):
     def __init__(self, split: str, data_dir: str = "data") -> None:
@@ -25,9 +25,24 @@ class ThingsMEGDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, i):
         if hasattr(self, "y"):
-            return self.X[i], self.y[i], self.subject_idxs[i]
+            return self.preprocess(self.X[i]), self.y[i], self.subject_idxs[i]
         else:
-            return self.X[i], self.subject_idxs[i]
+            return self.preprocess(self.X[i]), self.subject_idxs[i]
+
+    def preprocess(self, data):
+        # リサンプリング (今回は省略)
+        # resampled_data = ...
+
+        # フィルタリング (今回は省略)
+        # filtered_data = ...
+
+        # スケーリング (標準化)
+        scaled_data = (data - torch.mean(data, dim=-1, keepdim=True)) / torch.std(data, dim=-1, keepdim=True)
+
+        # ベースライン補正
+        baseline_corrected_data = scaled_data - torch.mean(scaled_data[..., :100], dim=-1, keepdim=True)
+
+        return baseline_corrected_data
         
     @property
     def num_channels(self) -> int:

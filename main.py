@@ -14,6 +14,7 @@ from src.models import BasicConvClassifier
 from src.utils import set_seed
 
 
+
 @hydra.main(version_base=None, config_path="configs", config_name="config")
 def run(args: DictConfig):
     set_seed(args.seed)
@@ -40,7 +41,7 @@ def run(args: DictConfig):
     #       Model
     # ------------------
     model = BasicConvClassifier(
-        train_set.num_classes, train_set.seq_len, train_set.num_channels
+        train_set.num_classes, train_set.seq_len, train_set.num_channels, args.hid_dim, args.p_drop
     ).to(args.device)
 
     # ------------------
